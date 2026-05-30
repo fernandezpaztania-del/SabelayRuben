@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sabela &amp; Ruben - Organizador</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#FAF7F2; --warm:#F5EFE4; --gold:#B8975A;
+  --gold-light:#D4B483; --gold-pale:#EFE5D0;
+  --dark:#2A2318; --mid:#6B5D4F; --light:#9E8E7E;
+  --white:#FFFFFF; --green:#4A7C59;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;}
+
+header{background:var(--dark);padding:2rem 1.5rem 1.5rem;text-align:center;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(184,151,90,.15) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(184,151,90,.1) 0%,transparent 60%);}
+.hdr-orn{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;margin-bottom:.5rem;position:relative;}
+header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,7vw,3.5rem);font-weight:300;color:var(--white);letter-spacing:.05em;line-height:1.1;position:relative;}
+header h1 span{color:var(--gold-light);font-style:italic;}
+.hdr-sub{color:var(--light);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;margin-top:.5rem;position:relative;}
+.gold-line{width:60px;height:1px;background:var(--gold);margin:1rem auto 0;}
+
+nav{display:flex;background:var(--dark);border-top:1px solid rgba(184,151,90,.2);}
+nav button{flex:1;padding:.9rem .5rem;background:none;border:none;color:var(--light);font-family:'Jost',sans-serif;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s;border-bottom:2px solid transparent;}
+nav button.active{color:var(--gold-light);border-bottom-color:var(--gold);}
+
+main{max-width:700px;margin:0 auto;padding:1.5rem 1rem 4rem;}
+.tab{display:none;} .tab.active{display:block;}
+
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--dark);margin-bottom:.25rem;}
+.sec-title span{color:var(--gold);font-style:italic;}
+.sec-sub{color:var(--light);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--gold-pale);}
+
+/* CEREMONY CARDS */
+.card{background:var(--white);border-radius:8px;margin-bottom:1rem;overflow:hidden;box-shadow:0 1px 4px rgba(42,35,24,.06);border:1px solid rgba(184,151,90,.15);}
+.card-hdr{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;cursor:pointer;}
+.card-num{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);font-weight:300;min-width:2rem;text-align:center;}
+.card-info{flex:1;}
+.card-title{font-weight:500;font-size:.9rem;color:var(--dark);}
+.card-meta{font-size:.72rem;color:var(--light);margin-top:.15rem;}
+.card-dur{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold);font-style:italic;}
+.card-chev{color:var(--gold-pale);font-size:1rem;transition:transform .3s;}
+.card.open .card-chev{transform:rotate(180deg);}
+.card-body{display:none;padding:0 1.25rem 1.25rem;border-top:1px solid var(--gold-pale);}
+.card.open .card-body{display:block;}
+
+.lbl{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--light);margin-bottom:.4rem;margin-top:.8rem;}
+.lbl:first-child{margin-top:.75rem;}
+
+/* Editable script text */
+.script-wrap{position:relative;}
+.script{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--mid);line-height:1.7;background:var(--warm);padding:.75rem 1rem;border-left:2px solid var(--gold);border-radius:0 4px 4px 0;white-space:pre-wrap;}
+.script-edit{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--mid);line-height:1.7;background:var(--warm);padding:.75rem 1rem;border-left:2px solid var(--gold);border-radius:0 4px 4px 0;width:100%;border:none;outline:none;resize:vertical;display:none;min-height:80px;}
+.edit-btn{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;background:none;border:1px solid var(--gold-pale);color:var(--light);padding:.15rem .5rem;border-radius:20px;cursor:pointer;margin-left:.5rem;}
+.edit-btn.active{background:var(--gold);color:var(--white);border-color:var(--gold);}
+
+/* Music rows */
+.music-list{list-style:none;}
+.music-row{display:flex;align-items:center;gap:.5rem;padding:.35rem 0;border-bottom:1px solid var(--gold-pale);flex-wrap:wrap;}
+.music-row:last-child{border-bottom:none;}
+.music-note{color:var(--gold);font-size:.9rem;flex-shrink:0;}
+.music-name{font-size:.82rem;color:var(--mid);flex:1;min-width:100px;}
+.music-name-input{font-size:.82rem;color:var(--mid);flex:1;border:none;border-bottom:1px solid var(--gold-pale);outline:none;background:transparent;font-family:'Jost',sans-serif;min-width:80px;display:none;}
+.music-link{color:var(--gold);text-decoration:none;font-size:.72rem;border:1px solid var(--gold-pale);padding:.1rem .4rem;border-radius:20px;white-space:nowrap;}
+.music-link-input{font-size:.7rem;color:var(--mid);border:none;border-bottom:1px solid var(--gold-pale);outline:none;background:transparent;font-family:'Jost',sans-serif;width:130px;display:none;}
+.confirmed{display:inline-flex;align-items:center;background:rgba(74,124,89,.1);color:var(--green);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;padding:.15rem .4rem;border-radius:20px;}
+.mat-list{list-style:none;}
+.mat-list li{font-size:.82rem;color:var(--mid);padding:.2rem 0;display:flex;align-items:center;gap:.5rem;}
+.mat-list li::before{content:'\00B7';color:var(--gold);font-size:1.2rem;}
+
+/* BANQUET */
+.bq-card{background:var(--white);border-radius:8px;margin-bottom:1rem;padding:1.25rem;box-shadow:0 1px 4px rgba(42,35,24,.06);border:1px solid rgba(184,151,90,.15);}
+.bq-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;gap:.5rem;}
+.bq-title-wrap{flex:1;}
+.bq-emoji{font-size:1.1rem;margin-right:.3rem;}
+.bq-title{font-weight:500;font-size:.9rem;color:var(--dark);}
+.bq-title-input{font-weight:500;font-size:.9rem;color:var(--dark);border:none;border-bottom:1px solid var(--gold-pale);outline:none;background:transparent;font-family:'Jost',sans-serif;width:100%;display:none;}
+.bq-desc{font-size:.82rem;color:var(--mid);line-height:1.6;margin-bottom:.6rem;}
+.bq-resp{font-size:.72rem;color:var(--light);margin-bottom:.75rem;}
+
+/* Idea cards checklist */
+.idea-checks{margin-top:.75rem;}
+.check-row{display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid var(--gold-pale);}
+.check-row:last-child{border-bottom:none;}
+.check-row input[type=checkbox]{accent-color:var(--gold);width:17px;height:17px;cursor:pointer;flex-shrink:0;}
+.check-label{font-size:.82rem;color:var(--mid);flex:1;}
+.check-label.done{text-decoration:line-through;color:var(--light);}
+.check-label-input{font-size:.82rem;color:var(--mid);flex:1;border:none;border-bottom:1px solid var(--gold-pale);outline:none;background:transparent;font-family:'Jost',sans-serif;display:none;}
+.btn-add-check{background:none;border:1px dashed var(--gold-pale);color:var(--light);border-radius:4px;padding:.3rem .6rem;font-size:.72rem;cursor:pointer;margin-top:.5rem;width:100%;}
+.btn-del-check{background:none;border:none;color:var(--light);cursor:pointer;font-size:.85rem;padding:0 .2rem;flex-shrink:0;}
+
+/* Video checklist editable */
+.video-row{display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid var(--gold-pale);}
+.video-row:last-child{border-bottom:none;}
+.video-row input[type=checkbox]{accent-color:var(--gold);width:17px;height:17px;cursor:pointer;flex-shrink:0;}
+.video-name{font-size:.82rem;color:var(--mid);flex:1;}
+.video-name.done{text-decoration:line-through;color:var(--light);}
+.video-name-input{font-size:.82rem;color:var(--mid);flex:1;border:none;border-bottom:1px solid var(--gold-pale);outline:none;background:transparent;font-family:'Jost',sans-serif;display:none;}
+.btn-del-video{background:none;border:none;color:var(--light);cursor:pointer;font-size:.85rem;padding:0 .2rem;flex-shrink:0;}
+.prog-bar{background:var(--gold-pale);border-radius:10px;height:4px;margin:.5rem 0;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:10px;transition:width .5s;}
+.prog-txt{font-size:.65rem;color:var(--light);font-style:italic;text-align:right;}
+.btn-add-video{background:none;border:1px dashed var(--gold-pale);color:var(--light);border-radius:4px;padding:.3rem .6rem;font-size:.72rem;cursor:pointer;margin-top:.5rem;width:100%;}
+
+/* GALLERY */
+.upload-area{border:2px dashed var(--gold-pale);border-radius:12px;padding:2.5rem 1.5rem;text-align:center;cursor:pointer;background:var(--white);margin-bottom:1.5rem;}
+.upload-icon{font-size:2rem;margin-bottom:.75rem;}
+.upload-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--dark);margin-bottom:.25rem;}
+.upload-sub{font-size:.75rem;color:var(--light);}
+.gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem;}
+.gal-item{aspect-ratio:1;border-radius:6px;overflow:hidden;position:relative;background:var(--warm);}
+.gal-item img{width:100%;height:100%;object-fit:cover;}
+.gal-del{position:absolute;top:4px;right:4px;background:rgba(139,58,58,.85);color:white;border:none;border-radius:50%;width:24px;height:24px;font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.empty-gal{text-align:center;padding:2rem;color:var(--light);font-size:.82rem;font-style:italic;}
+
+/* NOTES */
+.notes-area{background:var(--white);border-radius:8px;padding:1.25rem;border:1px solid rgba(184,151,90,.15);margin-bottom:1rem;}
+.notes-area textarea{width:100%;border:none;background:none;font-family:'Jost',sans-serif;font-size:.85rem;color:var(--dark);line-height:1.7;resize:none;outline:none;min-height:120px;}
+.save-hint{font-size:.65rem;color:var(--light);font-style:italic;text-align:right;}
+.todo-input-wrap{display:flex;gap:.5rem;margin-top:.75rem;}
+.todo-input-wrap input{flex:1;border:1px solid var(--gold-pale);border-radius:4px;padding:.5rem .75rem;font-family:'Jost',sans-serif;font-size:.82rem;color:var(--dark);outline:none;}
+.btn-add{background:var(--gold);color:var(--white);border:none;border-radius:4px;padding:.5rem 1rem;font-family:'Jost',sans-serif;font-size:.9rem;cursor:pointer;}
+.del-todo{margin-left:auto;background:none;border:none;color:var(--light);cursor:pointer;font-size:.9rem;padding:0 .25rem;}
+
+/* GLOBAL EDIT TOGGLE */
+.edit-mode-bar{display:flex;align-items:center;justify-content:flex-end;margin-bottom:1rem;gap:.5rem;}
+.edit-mode-label{font-size:.7rem;color:var(--light);letter-spacing:.1em;text-transform:uppercase;}
+.toggle-wrap{position:relative;display:inline-block;width:40px;height:22px;}
+.toggle-wrap input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--gold-pale);border-radius:22px;transition:.3s;}
+.toggle-slider::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:.3s;}
+.toggle-wrap input:checked + .toggle-slider{background:var(--gold);}
+.toggle-wrap input:checked + .toggle-slider::before{transform:translateX(18px);}
+
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:var(--gold-light);padding:.6rem 1.2rem;border-radius:30px;font-size:.78rem;transition:transform .3s;z-index:999;white-space:nowrap;border:1px solid rgba(184,151,90,.3);pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-orn">&#9830; Organizador de boda &#9830;</div>
+  <h1>Sabela <span>&amp;</span> Rub&eacute;n</h1>
+  <div class="hdr-sub">Ceremonia &iacute;ntima &middot; Casa familiar</div>
+  <div class="gold-line"></div>
+</header>
+
+<nav id="nav">
+  <button class="active" data-tab="ceremonia">Ceremonia</button>
+  <button data-tab="banquete">Banquete</button>
+  <button data-tab="galeria">Galer&iacute;a</button>
+  <button data-tab="notas">Notas</button>
+</nav>
+
+<main>
+
+  <!-- CEREMONIA -->
+  <div id="tab-ceremonia" class="tab active">
+    <div class="sec-title">La <span>Ceremonia</span></div>
+    <div class="sec-sub">30 minutos aproximadamente &middot; Orden del d&iacute;a</div>
+    <div class="edit-mode-bar">
+      <span class="edit-mode-label">Modo edici&oacute;n</span>
+      <label class="toggle-wrap">
+        <input type="checkbox" id="edit-toggle-cer">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div id="ceremony-list"></div>
+  </div>
+
+  <!-- BANQUETE -->
+  <div id="tab-banquete" class="tab">
+    <div class="sec-title">El <span>Banquete</span></div>
+    <div class="sec-sub">Momentos especiales &middot; Sorpresas</div>
+    <div class="edit-mode-bar">
+      <span class="edit-mode-label">Modo edici&oacute;n</span>
+      <label class="toggle-wrap">
+        <input type="checkbox" id="edit-toggle-bq">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="bq-card">
+      <div class="bq-header">
+        <div class="bq-title-wrap">
+          <span class="bq-emoji">&#127916;</span>
+          <span class="bq-title">V&iacute;deo sorpresa</span>
+        </div>
+      </div>
+      <div class="bq-desc">Mensajes grabados de familiares y amigos. Menos de 1 min cada uno. Se proyecta durante la cena.</div>
+      <div class="bq-resp">&#128100; Tania &middot; Coordina: Bea, Natalia, Sandra, Yaiza</div>
+      <div class="lbl" style="margin-top:.75rem">Personas confirmadas</div>
+      <div id="video-checks"></div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="prog-txt" id="prog-txt">0 confirmados</div>
+      <button class="btn-add-video" id="btn-add-video" style="display:none">+ A&ntilde;adir persona</button>
+    </div>
+
+    <!-- IDEAS -->
+    <div id="ideas-list"></div>
+
+  </div>
+
+  <!-- GALERIA -->
+  <div id="tab-galeria" class="tab">
+    <div class="sec-title"><span>Galer&iacute;a</span></div>
+    <div class="sec-sub">Fotos y v&iacute;deos &middot; Solo organizadoras</div>
+    <label class="upload-area">
+      <input type="file" id="file-input" multiple accept="image/*" style="display:none">
+      <div class="upload-icon">&#128247;</div>
+      <div class="upload-title">Subir fotos</div>
+      <div class="upload-sub">Toca para seleccionar</div>
+    </label>
+    <div id="gal-grid" class="gal-grid"></div>
+    <div id="gal-empty" class="empty-gal">Todav&iacute;a no hay fotos &#128156;</div>
+  </div>
+
+  <!-- NOTAS -->
+  <div id="tab-notas" class="tab">
+    <div class="sec-title"><span>Notas</span></div>
+    <div class="sec-sub">Ideas, recordatorios, pendientes</div>
+    <div class="notes-area">
+      <div class="lbl" style="margin-top:0">Notas libres</div>
+      <textarea id="free-notes" placeholder="Escribe aqui..."></textarea>
+    </div>
+    <div class="save-hint">Se guarda autom&aacute;ticamente</div>
+    <div style="margin-top:1.5rem;">
+      <div class="lbl">Lista de pendientes</div>
+      <div class="bq-card" style="padding:.75rem 1.25rem;">
+        <div id="todo-list"></div>
+        <div class="todo-input-wrap">
+          <input type="text" id="todo-input" placeholder="A&ntilde;adir tarea...">
+          <button class="btn-add" id="btn-add-todo">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+// ── STORAGE ───────────────────────────────────────────
+function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+// ── TOAST ─────────────────────────────────────────────
+var _tt;
+function toast(m){var e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('show');},2200);}
+
+// ── TABS ──────────────────────────────────────────────
+document.getElementById('nav').addEventListener('click',function(e){
+  var b=e.target; if(b.tagName!=='BUTTON')return;
+  var t=b.getAttribute('data-tab');
+  document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+  document.querySelectorAll('#nav button').forEach(function(x){x.classList.remove('active');});
+  document.getElementById('tab-'+t).classList.add('active');
+  b.classList.add('active');
+});
+
+// ══════════════════════════════════════════════════════
+// CEREMONY
+// ══════════════════════════════════════════════════════
+var CEREMONY_DEF = [
+  {n:1,title:"Llegada de invitados",dur:"15-20 min antes",people:[],text:null,textBy:null,
+   music:[{name:"Perfect (Instrumental) - Ed Sheeran",url:null,ok:false},{name:"Can't Help Falling in Love - Kina Grannis",url:null,ok:false},{name:"Photograph - Vitamin String Quartet",url:null,ok:false}],mats:[]},
+  {n:2,title:"Entrada del novio Ruben",dur:"2 min",people:["Ruben","Madrina","Persona 1"],
+   text:"Hoy nos reunimos para celebrar el amor, la eleccion consciente de compartir la vida y la felicidad de dos personas que han decidido caminar juntas.",textBy:"Persona 1",
+   music:[{name:"Cancion elegida por los novios",url:"https://open.spotify.com/track/7qEHsqek33rTcFNT9PFqLf",ok:true}],mats:[]},
+  {n:3,title:"Entrada de la novia Sabela",dur:"3 min",people:["Sabela","Persona 2"],
+   text:"Sabela llega hoy rodeada de las personas que mas quiere. Quienes la conocen saben que detras de su calma hay una mujer divertida, generosa y profundamente entregada a los demas.",textBy:"Persona 2",
+   music:[{name:"Cancion elegida por los novios",url:"https://open.spotify.com/track/0FLh1ZDsjnoACzBrAVjXT2",ok:true}],mats:[]},
+  {n:4,title:"Bienvenida oficial",dur:"4 min",people:["Nati (oficiante)"],
+   text:"Buenas tardes a todos.\n\nGracias por acompanar hoy a Sabela y Ruben en uno de los dias mas importantes de sus vidas.\n\nHoy no celebramos solo una boda. Celebramos una historia construida con paciencia, carino, respeto y amor.\n\nSabela y Ruben representan ese tipo de amor tranquilo que transmite hogar. Ella, dedicada a cuidar a los demas desde su profesion y desde su forma de ser. El, acostumbrado a pasar largas temporadas lejos por su trabajo, pero siempre regresando donde esta lo verdaderamente importante: su familia y las personas que ama.\n\nEl amor no consiste solo en compartir los dias faciles, sino tambien en elegirse incluso en la distancia, en el cansancio y en las dificultades. Y vosotros habeis demostrado que sabeis hacerlo.",
+   textBy:"Nati",music:[],mats:[]},
+  {n:5,title:"Lectura legal",dur:"2 min",people:["Nati (oficiante)"],
+   text:"La ley recoge en tres articulos lo que el amor ya sabe: que el matrimonio se construye desde la igualdad, el respeto mutuo y el compromiso compartido en el dia a dia.\n\nArticulo 66: Los conyuges son iguales en derechos y deberes.\n\nArticulo 67: Los conyuges deben respetarse y ayudarse mutuamente, y actuar en interes de la familia.\n\nArticulo 68: Los conyuges estan obligados a vivir juntos, guardarse fidelidad y socorrerse mutuamente. Deberan, ademas, compartir las responsabilidades domesticas y el cuidado y atencion de ascendientes y descendientes y otras personas dependientes a su cargo.\n\nNo solo caminar juntos, sino cuidarse y sostenerse a lo largo de la vida.",
+   textBy:"Nati",music:[],mats:[]},
+  {n:6,title:"Discurso de Sandra",dur:"3 min",people:["Sandra (prima de Ruben)"],text:null,textBy:null,
+   music:[{name:"Comptine d un autre ete - Yann Tiersen",url:null,ok:false}],mats:[]},
+  {n:7,title:"Discurso de Yaiza y Cristian",dur:"3 min",people:["Yaiza","Cristian"],text:null,textBy:null,
+   music:[{name:"Experience - Ludovico Einaudi",url:null,ok:false}],mats:[]},
+  {n:8,title:"Discurso de Tania",dur:"3 min",people:["Tania (hermana de la novia)"],text:null,textBy:null,
+   music:[{name:"River Flows in You - Yiruma",url:null,ok:false}],mats:[]},
+  {n:9,title:"Ritual - Ceremonia de la arena",dur:"5 min",people:["Bea","Sabela","Ruben"],
+   text:"La arena simboliza las vidas de Sabela y Ruben. Cada uno llega hasta aqui con su propia historia, sus experiencias y su camino recorrido.\n\nA partir de hoy, esas dos vidas se unen formando una sola. Al igual que estos granos de arena no podran separarse de nuevo, vuestra union quedara sellada por el amor, el respeto y el compromiso.",
+   textBy:"Bea",music:[{name:"Nuvole Bianche - Ludovico Einaudi",url:null,ok:false},{name:"I Get to Love You - Ruelle",url:null,ok:false}],
+   mats:["Recipiente grande de cristal","Dos recipientes con arena de distintos colores"]},
+  {n:10,title:"Votos matrimoniales",dur:"5 min",people:["Sabela","Ruben","Nati"],
+   text:"Ha llegado el momento mas personal de esta ceremonia. Las palabras que vais a compartir ahora nacen unicamente de vosotros y hablan del amor que habeis construido.",
+   textBy:"Nati",music:[{name:"Kiss The Rain - Yiruma",url:null,ok:false},{name:"Turning Page - Instrumental",url:null,ok:false}],mats:[]},
+  {n:11,title:"Intercambio de anillos",dur:"2 min",people:["Sabela","Ruben","Nati"],
+   text:"Estos anillos representan un circulo infinito: sin principio ni final, como el compromiso que hoy adquiris.\n\nYo, ___, te elijo a ti para compartir mi vida, cuidarte y caminar contigo todos los dias.",
+   textBy:"Nati",music:[{name:"All of Me - Piano Version",url:null,ok:false}],mats:["Los anillos"]},
+  {n:12,title:"Declaracion y beso",dur:"1 min",people:["Nati"],
+   text:"Y ahora, delante de vuestra familia y amigos, y con el amor como testigo... os declaro unidos en matrimonio.\n\nPodeis besaros.",
+   textBy:"Nati",music:[{name:"Signed, Sealed, Delivered - Stevie Wonder",url:null,ok:false},{name:"You Are The Best Thing - Ray LaMontagne",url:null,ok:false}],mats:[]},
+  {n:13,title:"Salida de los novios",dur:"2 min",people:["Sabela","Ruben","Todos"],text:null,textBy:null,
+   music:[{name:"Cancion elegida por los novios",url:"https://open.spotify.com/track/0FLh1ZDsjnoACzBrAVjXT2",ok:true}],mats:[]}
+];
+
+var cerData = load('cerData2', CEREMONY_DEF);
+var cerEditMode = false;
+
+document.getElementById('edit-toggle-cer').addEventListener('change', function(){
+  cerEditMode = this.checked;
+  renderCeremony();
+});
+
+function renderCeremony(){
+  var list = document.getElementById('ceremony-list');
+  list.innerHTML = '';
+  cerData.forEach(function(m, mi){
+    var card = document.createElement('div');
+    card.className = 'card';
+
+    // Header
+    var hdr = document.createElement('div');
+    hdr.className = 'card-hdr';
+    hdr.innerHTML = '<div class="card-num">'+m.n+'</div>'+
+      '<div class="card-info"><div class="card-title">'+m.title+'</div>'+
+      '<div class="card-meta">'+(m.people.length?m.people.join(' · '):'Ambiente')+'</div></div>'+
+      '<div class="card-dur">'+m.dur+'</div>'+
+      '<div class="card-chev">&#9662;</div>';
+    hdr.addEventListener('click', function(){ card.classList.toggle('open'); });
+
+    // Body
+    var body = document.createElement('div');
+    body.className = 'card-body';
+    var inner = document.createElement('div');
+
+    // Text section
+    if(m.text !== null){
+      var lblT = document.createElement('div');
+      lblT.className = 'lbl';
+      lblT.innerHTML = 'Texto &mdash; '+(m.textBy||'');
+      if(cerEditMode){
+        var editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = 'Editar';
+        var scriptDiv = document.createElement('div');
+        scriptDiv.className = 'script';
+        scriptDiv.textContent = m.text;
+        var scriptTA = document.createElement('textarea');
+        scriptTA.className = 'script-edit';
+        scriptTA.value = m.text;
+        var editing = false;
+        editBtn.addEventListener('click', function(){
+          editing = !editing;
+          editBtn.textContent = editing ? 'Guardar' : 'Editar';
+          editBtn.classList.toggle('active', editing);
+          scriptDiv.style.display = editing ? 'none' : 'block';
+          scriptTA.style.display = editing ? 'block' : 'none';
+          if(!editing){
+            m.text = scriptTA.value;
+            scriptDiv.textContent = m.text;
+            save('cerData2', cerData);
+            toast('Texto guardado');
+          }
+        });
+        lblT.appendChild(editBtn);
+        inner.appendChild(lblT);
+        inner.appendChild(scriptDiv);
+        inner.appendChild(scriptTA);
+      } else {
+        var scriptDiv2 = document.createElement('div');
+        scriptDiv2.className = 'script';
+        scriptDiv2.style.whiteSpace = 'pre-wrap';
+        scriptDiv2.textContent = m.text;
+        inner.appendChild(lblT);
+        inner.appendChild(scriptDiv2);
+      }
+    }
+
+    // Music section
+    if(m.music.length){
+      var lblM = document.createElement('div');
+      lblM.className = 'lbl';
+      lblM.textContent = 'Musica';
+      inner.appendChild(lblM);
+      var ul = document.createElement('ul');
+      ul.className = 'music-list';
+      m.music.forEach(function(s, si){
+        var li = document.createElement('li');
+        li.className = 'music-row';
+        var note = document.createElement('span');
+        note.className = 'music-note';
+        note.textContent = '\u266A';
+        li.appendChild(note);
+        if(s.ok){
+          var badge = document.createElement('span');
+          badge.className = 'confirmed';
+          badge.textContent = '\u2713 Confirmada';
+          li.appendChild(badge);
+        }
+        if(cerEditMode){
+          var nameIn = document.createElement('input');
+          nameIn.className = 'music-name-input';
+          nameIn.style.display = 'inline';
+          nameIn.value = s.name;
+          nameIn.addEventListener('change', function(){
+            s.name = nameIn.value;
+            save('cerData2', cerData);
+            toast('Guardado');
+          });
+          var linkIn = document.createElement('input');
+          linkIn.className = 'music-link-input';
+          linkIn.style.display = 'inline';
+          linkIn.placeholder = 'Link Spotify/YouTube';
+          linkIn.value = s.url || '';
+          linkIn.addEventListener('change', function(){
+            s.url = linkIn.value.trim() || null;
+            save('cerData2', cerData);
+            toast('Link guardado');
+          });
+          li.appendChild(nameIn);
+          li.appendChild(linkIn);
+        } else {
+          var nameSpan = document.createElement('span');
+          nameSpan.className = 'music-name';
+          nameSpan.textContent = s.name;
+          li.appendChild(nameSpan);
+          if(s.url){
+            var a = document.createElement('a');
+            a.className = 'music-link';
+            a.href = s.url;
+            a.target = '_blank';
+            a.textContent = '\u25B6 Abrir';
+            li.appendChild(a);
+          }
+        }
+        ul.appendChild(li);
+      });
+      inner.appendChild(ul);
+    }
+
+    // Materials
+    if(m.mats && m.mats.length){
+      var lblMat = document.createElement('div');
+      lblMat.className = 'lbl';
+      lblMat.textContent = 'Material';
+      inner.appendChild(lblMat);
+      var ulm = document.createElement('ul');
+      ulm.className = 'mat-list';
+      m.mats.forEach(function(mat){
+        var li = document.createElement('li');
+        li.textContent = mat;
+        ulm.appendChild(li);
+      });
+      inner.appendChild(ulm);
+    }
+
+    body.appendChild(inner);
+    card.appendChild(hdr);
+    card.appendChild(body);
+    list.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// BANQUET — VIDEO CHECKLIST (editable)
+// ══════════════════════════════════════════════════════
+var VIDEO_DEF = [
+  "Abuela de Sabela","Padres de Sabela",
+  "Padrinos + Bea y Natalia (juntos)","Tania + Alvaro e hijos",
+  "Abuela de Ruben","Madre de Ruben",
+  "Sandra + Tio de Ruben (juntos)","Yaiza y amigas"
+];
+var videoData = load('videoData2', VIDEO_DEF.map(function(n){ return {name:n, done:false}; }));
+var bqEditMode = false;
+
+document.getElementById('edit-toggle-bq').addEventListener('change', function(){
+  bqEditMode = this.checked;
+  renderVideos();
+  renderIdeas();
+  document.getElementById('btn-add-video').style.display = bqEditMode ? 'block' : 'none';
+});
+
+document.getElementById('btn-add-video').addEventListener('click', function(){
+  videoData.push({name:'Nueva persona', done:false});
+  save('videoData2', videoData);
+  renderVideos();
+  toast('Anadido');
+});
+
+function renderVideos(){
+  var container = document.getElementById('video-checks');
+  container.innerHTML = '';
+  videoData.forEach(function(item, i){
+    var row = document.createElement('div');
+    row.className = 'video-row';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = item.done;
+    cb.addEventListener('change', function(){
+      item.done = cb.checked;
+      save('videoData2', videoData);
+      nameEl.className = 'video-name' + (item.done ? ' done' : '');
+      updateProgress();
+    });
+    row.appendChild(cb);
+    if(bqEditMode){
+      var inp = document.createElement('input');
+      inp.className = 'video-name-input';
+      inp.style.display = 'inline';
+      inp.value = item.name;
+      inp.addEventListener('change', function(){
+        item.name = inp.value;
+        save('videoData2', videoData);
+      });
+      var del = document.createElement('button');
+      del.className = 'btn-del-video';
+      del.textContent = 'x';
+      del.addEventListener('click', function(){
+        videoData.splice(i,1);
+        save('videoData2', videoData);
+        renderVideos();
+        toast('Eliminado');
+      });
+      row.appendChild(inp);
+      row.appendChild(del);
+    } else {
+      var nameEl = document.createElement('span');
+      nameEl.className = 'video-name' + (item.done ? ' done' : '');
+      nameEl.textContent = item.name;
+      row.appendChild(nameEl);
+    }
+    container.appendChild(row);
+  });
+  updateProgress();
+}
+
+function updateProgress(){
+  var done = videoData.filter(function(v){ return v.done; }).length;
+  var pct = videoData.length ? Math.round(done/videoData.length*100) : 0;
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-txt').textContent = done+' de '+videoData.length+' confirmados';
+}
+
+// ══════════════════════════════════════════════════════
+// BANQUET — IDEAS (4 fixed, editable title + checklist)
+// ══════════════════════════════════════════════════════
+var IDEAS_DEF = [
+  { emoji:'🎬', title:'Video sorpresa', desc:'Mensajes grabados de familiares y amigos para proyectar durante la cena.', resp:'Tania, Bea, Natalia, Sandra, Yaiza',
+    items:[{text:'Abuela de Sabela',done:false},{text:'Padres de Sabela',done:false},{text:'Familia Ruben',done:false},{text:'Amigos',done:false}] },
+  { emoji:'✉️', title:'Cartas a futuro', desc:'Cada invitado escribe una tarjeta. Los novios las abren en su primer aniversario.', resp:'Solo lo saben Bea y Nati',
+    items:[{text:'Comprar tarjetas bonitas',done:false},{text:'Poner tarjetas y boligrafos en cada mesa',done:false},{text:'Recoger sobre al final',done:false}] },
+  { emoji:'🎵', title:'Actuacion sorpresa', desc:'Plan B: cancion en directo durante el banquete.', resp:'Pendiente de confirmar',
+    items:[{text:'Confirmar con la nina',done:false},{text:'Elegir cancion (Dos Oruguitas)',done:false},{text:'Preparar momento en el programa',done:false}] },
+  { emoji:'💡', title:'Otra idea', desc:'Si surge algo mas...', resp:'',
+    items:[] }
+];
+
+var ideasData = load('ideasData2', IDEAS_DEF);
+
+function renderIdeas(){
+  var list = document.getElementById('ideas-list');
+  list.innerHTML = '';
+  ideasData.forEach(function(idea, ii){
+    var card = document.createElement('div');
+    card.className = 'bq-card';
+
+    // Header
+    var hdr = document.createElement('div');
+    hdr.className = 'bq-header';
+    var titleWrap = document.createElement('div');
+    titleWrap.className = 'bq-title-wrap';
+    var emojiSpan = document.createElement('span');
+    emojiSpan.className = 'bq-emoji';
+    emojiSpan.textContent = idea.emoji;
+    titleWrap.appendChild(emojiSpan);
+    if(bqEditMode){
+      var titleIn = document.createElement('input');
+      titleIn.className = 'bq-title-input';
+      titleIn.style.display = 'inline';
+      titleIn.value = idea.title;
+      titleIn.addEventListener('change', function(){
+        idea.title = titleIn.value;
+        save('ideasData2', ideasData);
+        toast('Guardado');
+      });
+      titleWrap.appendChild(titleIn);
+    } else {
+      var titleSpan = document.createElement('span');
+      titleSpan.className = 'bq-title';
+      titleSpan.textContent = idea.title;
+      titleWrap.appendChild(titleSpan);
+    }
+    hdr.appendChild(titleWrap);
+    card.appendChild(hdr);
+
+    // Desc + resp
+    if(idea.desc){
+      var desc = document.createElement('div');
+      desc.className = 'bq-desc';
+      desc.textContent = idea.desc;
+      card.appendChild(desc);
+    }
+    if(idea.resp){
+      var resp = document.createElement('div');
+      resp.className = 'bq-resp';
+      resp.textContent = '\uD83D\uDC64 '+idea.resp;
+      card.appendChild(resp);
+    }
+
+    // Checklist
+    var lbl = document.createElement('div');
+    lbl.className = 'lbl';
+    lbl.style.marginTop = '.5rem';
+    lbl.textContent = 'Checklist';
+    card.appendChild(lbl);
+
+    var checks = document.createElement('div');
+    checks.className = 'idea-checks';
+    idea.items.forEach(function(item, ci){
+      var row = document.createElement('div');
+      row.className = 'check-row';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = item.done;
+      row.appendChild(cb);
+      if(bqEditMode){
+        var inp = document.createElement('input');
+        inp.className = 'check-label-input';
+        inp.style.display = 'inline';
+        inp.value = item.text;
+        inp.addEventListener('change', function(){
+          item.text = inp.value;
+          save('ideasData2', ideasData);
+        });
+        cb.addEventListener('change', function(){
+          item.done = cb.checked;
+          save('ideasData2', ideasData);
+        });
+        var del = document.createElement('button');
+        del.className = 'btn-del-check';
+        del.textContent = 'x';
+        del.addEventListener('click', function(){
+          idea.items.splice(ci,1);
+          save('ideasData2', ideasData);
+          renderIdeas();
+        });
+        row.appendChild(inp);
+        row.appendChild(del);
+      } else {
+        var lbl2 = document.createElement('span');
+        lbl2.className = 'check-label' + (item.done ? ' done' : '');
+        lbl2.textContent = item.text;
+        cb.addEventListener('change', function(){
+          item.done = cb.checked;
+          lbl2.className = 'check-label' + (item.done ? ' done' : '');
+          save('ideasData2', ideasData);
+        });
+        row.appendChild(lbl2);
+      }
+      checks.appendChild(row);
+    });
+
+    if(bqEditMode){
+      var addBtn = document.createElement('button');
+      addBtn.className = 'btn-add-check';
+      addBtn.textContent = '+ Añadir punto';
+      addBtn.addEventListener('click', function(){
+        idea.items.push({text:'Nuevo punto',done:false});
+        save('ideasData2', ideasData);
+        renderIdeas();
+      });
+      checks.appendChild(addBtn);
+    }
+
+    card.appendChild(checks);
+    list.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// GALLERY
+// ══════════════════════════════════════════════════════
+var gallery = load('gallery2',[]);
+
+function renderGallery(){
+  var grid = document.getElementById('gal-grid');
+  var empty = document.getElementById('gal-empty');
+  grid.innerHTML = '';
+  if(!gallery.length){ empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  gallery.forEach(function(item){
+    var div = document.createElement('div');
+    div.className = 'gal-item';
+    var img = document.createElement('img');
+    img.src = item.data;
+    img.alt = '';
+    var del = document.createElement('button');
+    del.className = 'gal-del';
+    del.textContent = 'x';
+    del.addEventListener('click', function(e){
+      e.stopPropagation();
+      gallery = gallery.filter(function(g){ return g.id !== item.id; });
+      save('gallery2', gallery);
+      renderGallery();
+      toast('Eliminado');
+    });
+    div.appendChild(img);
+    div.appendChild(del);
+    grid.appendChild(div);
+  });
+}
+
+document.getElementById('file-input').addEventListener('change', function(){
+  var files = this.files;
+  if(!files||!files.length) return;
+  Array.prototype.forEach.call(files, function(file){
+    if(!file.type.match(/^image\//)) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      gallery.push({id:Date.now()+Math.random(), data:e.target.result, name:file.name});
+      try{ save('gallery2', gallery); } catch(ex){ toast('Galeria llena'); return; }
+      renderGallery();
+      toast('Foto anadida');
+    };
+    reader.readAsDataURL(file);
+  });
+  this.value = '';
+});
+
+// ══════════════════════════════════════════════════════
+// NOTES + TODOS
+// ══════════════════════════════════════════════════════
+var notes_ta = document.getElementById('free-notes');
+try{ notes_ta.value = localStorage.getItem('notes2')||''; } catch(e){}
+notes_ta.addEventListener('input', function(){ try{ localStorage.setItem('notes2', notes_ta.value); } catch(e){} });
+
+var DEFAULT_TODOS = ["Pedir videos a familiares","Comprar tarjetas cartas a futuro","Confirmar quien controla musica","Designar coordinadora del dia","Confirmar actuacion Plan B","Montar video sorpresa"];
+var todos = load('todos2', null);
+if(!todos){ todos = DEFAULT_TODOS.map(function(t,i){ return {id:i,text:t,done:false}; }); save('todos2',todos); }
+
+function renderTodos(){
+  var list = document.getElementById('todo-list');
+  list.innerHTML = '';
+  todos.forEach(function(t){
+    var div = document.createElement('div');
+    div.className = 'check-row' + (t.done ? '' : '');
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = t.done;
+    var sp = document.createElement('span');
+    sp.className = 'check-label' + (t.done ? ' done' : '');
+    sp.textContent = t.text;
+    cb.addEventListener('change', function(){
+      t.done = cb.checked;
+      sp.className = 'check-label' + (t.done ? ' done' : '');
+      save('todos2', todos);
+    });
+    var del = document.createElement('button');
+    del.className = 'btn-del-check';
+    del.textContent = 'x';
+    del.addEventListener('click', function(){
+      todos = todos.filter(function(x){ return x.id !== t.id; });
+      save('todos2', todos);
+      renderTodos();
+    });
+    div.appendChild(cb);
+    div.appendChild(sp);
+    div.appendChild(del);
+    list.appendChild(div);
+  });
+}
+
+document.getElementById('btn-add-todo').addEventListener('click', addTodo);
+document.getElementById('todo-input').addEventListener('keyup', function(e){ if(e.keyCode===13) addTodo(); });
+function addTodo(){
+  var inp = document.getElementById('todo-input');
+  var t = inp.value.trim();
+  if(!t) return;
+  todos.push({id:Date.now(),text:t,done:false});
+  save('todos2',todos);
+  renderTodos();
+  inp.value = '';
+  toast('Anadido');
+}
+
+// ── INIT ──────────────────────────────────────────────
+renderCeremony();
+renderVideos();
+renderIdeas();
+renderGallery();
+renderTodos();
+
+})();
+</script>
+</body>
+</html>
